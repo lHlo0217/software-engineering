@@ -1,8 +1,7 @@
 public class Main {
-    private static GameGUI Game;
-    private static World world;
     public static void main(String args[]){
-        world = new World(60,100);
-        Game = new GameGUI("Game of Life",world);
+        World world = new World(100,100);
+        GameGUI Game = new GameGUI("生命游戏",world);
+        return;
     }
 }

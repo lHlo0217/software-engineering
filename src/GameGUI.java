@@ -2,17 +2,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 public class GameGUI extends JFrame implements ActionListener{
-    private int lx,ly;
+    private int rowNum,colNum;
     private World world;
     private JButton[][] TWorld;
-    private JLabel NowGeneration;
-    private JButton randomInit,BeginAndOver,StopAndContinue,Next,Exit;
+    private JButton randomInit,BeginAndOver,StopAndContinue,Next;
     private boolean isRunning;
     private Thread thread;
     public GameGUI(String name,World world){
         super(name);
-        this.lx = world.getLx();
-        this.ly = world.getLy();
+        this.rowNum = world.getrowNum();
+        this.colNum = world.getcolNum();
         this.world = world;
         InitGameGUI();
     }
@@ -20,20 +19,18 @@ public class GameGUI extends JFrame implements ActionListener{
         JPanel backPanel,bottomPanel,centerPanel;
         backPanel = new JPanel(new BorderLayout());
         bottomPanel = new JPanel();
-        centerPanel = new JPanel(new GridLayout(lx,ly));
+        centerPanel = new JPanel(new GridLayout(rowNum,colNum));
         this.setContentPane(backPanel);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         backPanel.add(centerPanel,"Center");
-        backPanel.add(bottomPanel,"South");
-        TWorld = new JButton[lx][ly];
-        NowGeneration = new JLabel("当前代数： 0");
+        backPanel.add(bottomPanel,"North");
+        TWorld = new JButton[rowNum][colNum];
         randomInit = new JButton("随机生成细胞");
         BeginAndOver = new JButton("开始游戏");
         StopAndContinue = new JButton("暂停游戏");
         Next = new JButton("下一代");
-        Exit = new JButton("退出");
-        for(int i=0;i<lx;i++){
-            for(int j=0;j<ly;j++){
+        for(int i=0;i<rowNum;i++){//生成主细胞面板
+            for(int j=0;j<colNum;j++){
                 TWorld[i][j] = new JButton("");
                 TWorld[i][j].setBackground(Color.white);
                 centerPanel.add(TWorld[i][j]);
@@ -43,13 +40,12 @@ public class GameGUI extends JFrame implements ActionListener{
         bottomPanel.add(BeginAndOver);
         bottomPanel.add(StopAndContinue);
         bottomPanel.add(Next);
-        bottomPanel.add(NowGeneration);
-        bottomPanel.add(Exit);
 
-        int szx,szy;
-        szx = Math.min(800,(lx+1)*20);
-        szy = Math.min(ly*20,1500);
-        szy = Math.max(ly*20,500);
+        int szx,szy;//界面设置大小
+        szx = Math.min(1000,rowNum*2);
+        szx = Math.max(1000,rowNum*2);
+        szy = Math.min(colNum*2,1000);
+        szy = Math.max(colNum*2,1000);
         this.setSize(szy,szx);
         this.setResizable(true);
         this.setLocationRelativeTo(null);
@@ -66,9 +62,8 @@ public class GameGUI extends JFrame implements ActionListener{
         BeginAndOver.addActionListener(this);
         StopAndContinue.addActionListener(this);
         Next.addActionListener(this);
-        Exit.addActionListener(this);
-        for(int i=0;i<lx;i++){
-            for(int j=0;j<ly;j++){
+        for(int i=0;i<rowNum;i++){
+            for(int j=0;j<colNum;j++){
                 TWorld[i][j].addActionListener(this);
             }
         }
@@ -93,7 +88,7 @@ public class GameGUI extends JFrame implements ActionListener{
                     while(isRunning){
                         Change();
                         try{
-                            Thread.sleep(1000);
+                            Thread.sleep(100);
                         }catch (InterruptedException e1){
                             e1.printStackTrace();
                         }
@@ -111,7 +106,6 @@ public class GameGUI extends JFrame implements ActionListener{
             BeginAndOver.setText("开始游戏");
             StopAndContinue.setText("暂停游戏");
             randomInit.setText("随机生成细胞");
-            NowGeneration.setText("当前代数： 0");
         }
         else if(e.getSource()==StopAndContinue&&StopAndContinue.getText()=="暂停游戏"){
             isRunning = false;
@@ -126,7 +120,7 @@ public class GameGUI extends JFrame implements ActionListener{
                     while (isRunning){
                         Change();
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(100);
                         }catch (InterruptedException e1){
                             e1.printStackTrace();
                         }
@@ -141,21 +135,15 @@ public class GameGUI extends JFrame implements ActionListener{
             isRunning = false;
             thread = null;
         }
-        else if(e.getSource()==Exit){
-            isRunning = false;
-            thread = null;
-            this.dispose();
-            System.exit(0);
-        }
         else{//按钮监听
             if(isRunning==false) {
-                for (int i = 0; i < lx; i++) {
-                    for (int j = 0; j < ly; j++) {
+                for (int i = 0; i < rowNum; i++) {
+                    for (int j = 0; j < colNum; j++) {
                         if (e.getSource() == TWorld[i][j]) {
-                            boolean cnt = world.getCellXY(i, j);
+                            boolean cnt = world.getCelrowNumY(i, j);
                             if (cnt == true) cnt = false;
                             else cnt = true;
-                            world.setCellXY(i, j, cnt);
+                            world.setCelrowNumY(i, j, cnt);
                             break;
                         }
                     }
@@ -167,12 +155,11 @@ public class GameGUI extends JFrame implements ActionListener{
     public void Change(){
         world.updateOfCell();
         showWorld();
-        NowGeneration.setText("当前代数: "+world.getNowGeneration());
     }
-    public void showWorld(){
-        for(int i=0;i<lx;i++){
-            for(int j=0;j<ly;j++){
-                if(world.getCellXY(i,j)){
+    public void showWorld(){//显示当前状态
+        for(int i=0;i<rowNum;i++){
+            for(int j=0;j<colNum;j++){
+                if(world.getCelrowNumY(i,j)){
                     TWorld[i][j].setBackground(Color.GREEN);
                 }
                 else{
