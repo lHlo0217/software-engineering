@@ -28,10 +28,13 @@ public class World {
     public void setcolNum(int colNum) {
         this.colNum = colNum;
     }
+
     public boolean getCelrowNumY(int x,int y){
         return cell[x][y].getIsLive();
     }
+
     public void setCelrowNumY(int x,int y,boolean is){cell[x][y].setIsLive(is);}
+
     public void randomInitCell(){//随机初始化
         for(int i=0;i<rowNum;i++){
             for(int j=0;j<colNum;j++){

@@ -13,17 +13,16 @@ public class GameGUI extends JFrame implements ActionListener{
         this.rowNum = world.getrowNum();
         this.colNum = world.getcolNum();
         this.world = world;
-        InitGameGUI();
     }
     public void InitGameGUI(){
-        JPanel backPanel,bottomPanel,centerPanel;
+        JPanel backPanel,topPanel,centerPanel;
         backPanel = new JPanel(new BorderLayout());
-        bottomPanel = new JPanel();
+        topPanel = new JPanel();
         centerPanel = new JPanel(new GridLayout(rowNum,colNum));
         this.setContentPane(backPanel);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         backPanel.add(centerPanel,"Center");
-        backPanel.add(bottomPanel,"North");
+        backPanel.add(topPanel,"North");
         TWorld = new JButton[rowNum][colNum];
         randomInit = new JButton("随机生成细胞");
         BeginAndOver = new JButton("开始游戏");
@@ -36,11 +35,13 @@ public class GameGUI extends JFrame implements ActionListener{
                 centerPanel.add(TWorld[i][j]);
             }
         }
-        bottomPanel.add(randomInit);
-        bottomPanel.add(BeginAndOver);
-        bottomPanel.add(StopAndContinue);
-        bottomPanel.add(Next);
-
+        topPanel.add(randomInit);
+        topPanel.add(BeginAndOver);
+        topPanel.add(StopAndContinue);
+        topPanel.add(Next);
+        backPanel.setBackground(Color.pink);
+        topPanel.setBackground(Color.pink);
+        centerPanel.setBackground(Color.pink);
         int szx,szy;//界面设置大小
         szx = Math.min(1000,rowNum*2);
         szx = Math.max(1000,rowNum*2);
